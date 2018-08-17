@@ -25,7 +25,7 @@ docker inspect $USERNAME/$IMAGE:latest | jq '.[].ContainerConfig.Labels'
 # docker exec $USERNAME/$IMAGE:latest npm run test
 
 # update the deployment config with the new version
-cd ./devops/config && sed "s@\$version@$version@g" deployment.yaml > deployment.tmp && mv deployment.tmp deployment.yaml && cd ../..
+cd ../devops/config && sed "s@\$version@$version@g" deployment.yaml > deployment.tmp && mv deployment.tmp deployment.yaml && cd ../..
 
 # push to docker hub
 docker login -u $USERNAME -p $DOCKER_PASSWORD 
