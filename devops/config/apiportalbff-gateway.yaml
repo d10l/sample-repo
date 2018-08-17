@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: apiportal-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "open.d10l.de"
+    - "api.d10l.de"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: apiportalbff
+spec:
+  hosts:
+  - "api.d10l.de"
+  gateways:
+  - apiportal-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/proposals
+    - uri:
+        prefix: /api/users
+    - uri:
+        prefix: /api/categories
+    - uri:
+        prefix: /api/lint
+    - uri:
+        prefix: /api/hello
+    - uri:
+        prefix: /api/pre-signed-url
+    route:
+    - destination:
+        host: apiportalbff
+        port:
+          number: 9080
