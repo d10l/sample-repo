@@ -10,11 +10,9 @@ IMAGE=$APINAME
 LATEST_GIT_HASH=$(git log -1 --format=%h)
 
 # bump version
-cd ./src
-npm version --no-git-tag-version patch
-version=`echo -e $(jq -r ".version" package.json)`
+bump patch
+version=`cat VERSION`
 echo "version: $version"
-
 # run build
 docker build -t $USERNAME/$IMAGE:latest --build-arg GIT_COMMIT=$LATEST_GIT_HASH .
 
@@ -25,7 +23,7 @@ docker inspect $USERNAME/$IMAGE:latest | jq '.[].ContainerConfig.Labels'
 # docker exec $USERNAME/$IMAGE:latest npm run test
 
 # update the deployment config with the new version
-cd ../devops/config && sed "s@\$version@$version@g" deployment.yaml > deployment.tmp && mv deployment.tmp deployment.yaml && cd ../..
+cd ./devops/config && sed "s@\$version@$version@g" deployment.yaml > deployment.tmp && mv deployment.tmp deployment.yaml && cd ..
 
 # push to docker hub
 docker login -u $USERNAME -p $DOCKER_PASSWORD 
