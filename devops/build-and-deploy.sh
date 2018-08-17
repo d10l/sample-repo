@@ -10,7 +10,7 @@ IMAGE=$APINAME
 LATEST_GIT_HASH=$(git log -1 --format=%h)
 
 # bump version
-cd ../src
+cd ./src
 npm version --no-git-tag-version patch
 version=`echo -e $(jq -r ".version" package.json)`
 echo "version: $version"
