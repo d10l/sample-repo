@@ -19,7 +19,7 @@ jobs:
             --zone us-central1-a --project trusty-acre-156607
       - run:
           name: Build and Deploy App
-          command: ./devops/build-and-deploy.sh
+          command: chmod 777 ./devops/build-and-deploy.sh && ./devops/build-and-deploy.sh
 
 workflows:
   version: 2
