@@ -10,6 +10,7 @@ IMAGE=$APINAME
 LATEST_GIT_HASH=$(git log -1 --format=%h)
 
 # bump version
+cd ../src
 npm version --no-git-tag-version patch
 version=`echo -e $(jq -r ".version" package.json)`
 echo "version: $version"
@@ -23,10 +24,8 @@ docker inspect $USERNAME/$IMAGE:latest | jq '.[].ContainerConfig.Labels'
 # UNIT TESTS
 # docker exec $USERNAME/$IMAGE:latest npm run test
 
-# GETS THE CURRENT CANARY VERSION FROM VERSION FILE
-cd ./devops/config
-sed "s@\$CANARY_VERSION@$version@g" $IMAGE-template.yaml > $IMAGE.yaml
-cd ../../
+# update the deployment config with the new version
+cd ./devops/config && sed "s@\$version@$version@g" deployment.yaml > deployment.tmp && mv deployment.tmp deployment.yaml && cd ../..
 
 # push to docker hub
 docker login -u $USERNAME -p $DOCKER_PASSWORD 
@@ -36,26 +35,16 @@ docker push $USERNAME/$IMAGE:latest
 docker push $USERNAME/$IMAGE:$version
 
 # install app
-kubectl apply -f  devops/config/$IMAGE.yaml
-# kubectl apply -f <(istioctl kube-inject -f $ISTIO_DIR/samples/bookinfo/kube/bookinfo.yaml)
+kubectl apply -f  devops/config/deployment.yaml
+kubectl apply -f  devops/config/gateway.yaml
 
 # Confirm all services and pods are correctly defined and running
 kubectl get services
 kubectl get pods
 
-# Determining the ingress IP and Port https://istio.io/docs/tasks/traffic-management/ingress.html
-#export GATEWAY_URL=<workerNodeAddress>:$(kubectl get svc istio-ingress -n istio-system -o jsonpath='{.spec.ports[0].nodePort}')
-#kubectl get ingress -o wide
-clustercheck=$(gcloud compute firewall-rules describe "allow-book" --verbosity=none)
-if [[ $clustercheck != *"allow-book"* ]]; then
-  gcloud compute firewall-rules create allow-book --allow tcp:$(kubectl get svc istio-ingress -n istio-system -o jsonpath='{.spec.ports[0].nodePort}')
-fi
-
 # confirm bookinfo app is running (can I use a health-check or prometheus?)
 #curl -o /dev/null -s -w "%{http_code}\n" http://${GATEWAY_URL}/productpage
 
-#Delete istio binaries
-rm -rf $ISTIO_DIR
 # RLEASE AS BUILD VERSION (X.X.X+1)
 # login to github
 git config --global user.email "den.seidel+cicd@gmail.com"
