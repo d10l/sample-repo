@@ -34,7 +34,6 @@ docker push $USERNAME/$IMAGE:$version
 
 # install app
 kubectl apply -f  devops/config/deployment.yaml
-kubectl apply -f  devops/config/gateway.yaml
 
 # Confirm all services and pods are correctly defined and running
 kubectl get services
