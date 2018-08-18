@@ -6,5 +6,5 @@ WORKDIR /code
 RUN apk add --no-cache alpine-sdk libffi-dev openssl-dev
 RUN pip install -r requirements.txt
 
-EXPOSE 9090
-CMD ["python", "-u", "/code/app.py"]
+EXPOSE 9080
+CMD ["connexion", "run", "/code/swagger/swagger.yaml",  "--mock=all", "-v", "-p", "9080"]
