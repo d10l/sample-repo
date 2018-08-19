@@ -23,12 +23,7 @@ spec:
   gateways:
   - d10l-gateway
   http:
-  - match:
-    - uri:
-        prefix: /$APINAME
-    rewrite:
-      uri: /
-    route:
+  - route:
     - destination:
         host: $APINAME
         port:
