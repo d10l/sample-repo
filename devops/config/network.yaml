@@ -1,7 +1,7 @@
 # apiVersion: networking.istio.io/v1alpha3
 # kind: Gateway
 # metadata:
-#   name: apiportal-gateway
+#   name: d10l-gateway
 # spec:
 #   selector:
 #     istio: ingressgateway # use istio default controller
@@ -11,8 +11,7 @@
 #       name: http
 #       protocol: HTTP
 #     hosts:
-#     - "open.d10l.de"
-#     - "api.d10l.de"
+#     - "*.d10l.de"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -20,9 +19,9 @@ metadata:
   name: $APINAME
 spec:
   hosts:
-  - "api.d10l.de"
+  - $APINAME
   gateways:
-  - apiportal-gateway
+  - d10l-gateway
   http:
   - match:
     - uri:
