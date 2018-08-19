@@ -5,7 +5,7 @@ set -ex
 # docker hub username 
 USERNAME=dennisseidel
 # image name TODO get this from config? replace this placeholder when the repository is initialize with the repo/api name via sed
-IMAGE=$APINAME
+IMAGE=sample-repo
 # get latest githash
 LATEST_GIT_HASH=$(git log -1 --format=%h)
 

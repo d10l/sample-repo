@@ -1,34 +1,34 @@
 ##################################################################################################
-# $APINAME service (based on Reviews service)
+# sample-repo service (based on Reviews service)
 ##################################################################################################
 apiVersion: v1
 kind: Service
 metadata:
-  name: $APINAME
+  name: sample-repo
   labels:
-    app: $APINAME
+    app: sample-repo
 spec:
   ports:
   - port: 9080
     name: http
   selector:
-    app: $APINAME
+    app: sample-repo
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: $APINAME
+  name: sample-repo
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: $APINAME
+        app: sample-repo
         version: v1
     spec:
       containers:
-      - name: $APINAME
-        image: dennisseidel/$APINAME:$version
+      - name: sample-repo
+        image: dennisseidel/sample-repo:$version
         imagePullPolicy: IfNotPresent
         env:
            - name: PORT
